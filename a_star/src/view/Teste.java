@@ -5,8 +5,10 @@
  */
 package view;
 
+import estado.Estado;
 import estado.Margem;
 import java.util.HashMap;
+import operacoes.Operacao;
 
 /**
  *
@@ -15,6 +17,15 @@ import java.util.HashMap;
 public class Teste {
     
     public static void main(String[] args) {
-        
+        for(Estado est: new Operacao().gerarEstadosAleatorios()){
+            System.out.println("===================");
+            System.err.println(est);
+            System.out.println("===================");
+            System.out.println(est.getProximosEstadosPossiveis());
+            System.out.println("------------------- \n \n \n \n ");
+                
+            }
+            
+        }
     }
-}
+
