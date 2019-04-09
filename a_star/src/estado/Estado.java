@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package estado;
 
 import java.util.ArrayList;
@@ -14,30 +9,49 @@ import java.util.HashMap;
  */
 public class Estado {
 
-    @Override
-    public String toString() {
-        return "["+this.getRio().getEsquerda().getCanibais()+"C "+this.getRio().getEsquerda().getMissionarios()+"M <=> "+
-               this.getRio().getDireita().getCanibais()+"C "+this.getRio().getDireita().getMissionarios()+"M]";
-    }
-    
-
-//    Atributos
-    private Rio rio;
-    private boolean obectivo; //true or false 
-    private Integer gn;
-    private HashMap<Estado, Integer> proximosEstadosPossiveis = new HashMap();
+    //    Atributos
+    private String designacao;
+    private Rio rio = new Rio();
+    private Boolean objectivo = false;
+    private Integer hn;
+    private HashMap<Estado, Integer> proximosEstadosPossiveis = new HashMap(5);
 
     //para controle da operacao
     private ArrayList<Estado> caminho = new ArrayList();
     private boolean visitado = false;
+    private boolean avaliado = false;
 
-    public Estado(Rio rio) {
+    private ArrayList<Log> logs = new ArrayList();
+
+    public Estado(String designacao, Rio rio, Integer hn) {
+        this.setDesignacao(designacao);
         this.setRio(rio);
+        this.setHn(hn);
+    }
+
+    public Estado() {
+    }
+
+    @Override
+    public String toString() {
+//        return "[" + this.getRio().getEsquerda().getCanibais() + "C " + this.getRio().getEsquerda().getMissionarios() + "M <=> "
+//                + this.getRio().getDireita().getCanibais() + "C " + this.getRio().getDireita().getMissionarios() + "M]";
+        return this.getDesignacao();
     }
 
     //outros metodos
     public void adicionarProximoEstadoPossivel(Estado estado, Integer pesoArresta) {
         this.getProximosEstadosPossiveis().put(estado, pesoArresta);
+    }
+
+    /**
+     * Verifica se o no em causa tem ou nao filhos
+     *
+     * @param est
+     * @return
+     */
+    public Boolean temFilhos() {
+        return !this.getProximosEstadosPossiveis().isEmpty();
     }
 
     public Rio getRio() {
@@ -48,20 +62,44 @@ public class Estado {
         this.rio = rio;
     }
 
-    public boolean isObectivo() {
-        return obectivo;
+    public String getDesignacao() {
+        return designacao;
     }
 
-    public void setObectivo(boolean obectivo) {
-        this.obectivo = obectivo;
+    public void setDesignacao(String designacao) {
+        this.designacao = designacao;
     }
 
-    public Integer getGn() {
-        return gn;
+    public boolean isObjectivo() {
+        return objectivo;
     }
 
-    public void setGn(Integer gn) {
-        this.gn = gn;
+    public boolean isAvaliado() {
+        return avaliado;
+    }
+
+    public void setAvaliado(boolean avaliado) {
+        this.avaliado = avaliado;
+    }
+
+    public void setObjectivo(boolean objectivo) {
+        this.objectivo = objectivo;
+    }
+
+    public ArrayList<Log> getLogs() {
+        return logs;
+    }
+
+    public void setLogs(ArrayList<Log> logs) {
+        this.logs = logs;
+    }
+
+    public Integer getHn() {
+        return hn;
+    }
+
+    public void setHn(Integer hn) {
+        this.hn = hn;
     }
 
     public HashMap<Estado, Integer> getProximosEstadosPossiveis() {
