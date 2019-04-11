@@ -1,22 +1,23 @@
-
 package estados;
 
 /**
- *Esta classe represent o estado em que se esta. 
- * Mais concretamento uma margem, que pode ser direita ou esquerda 
+ * Esta classe represent o estado em que se esta. Mais concretamento uma margem,
+ * que pode ser direita ou esquerda
+ *
  * @author cinquenta
  * @author samira
  * @author lucilia
  */
 public class Estado {
 
-    //Atributos
-    int numeroCanibais, numeroMissionarios;
-    boolean margem; //direita = true; esquerda = false
-    public final int VALOR_DE_INICIO = 3;//cosntante
-    String designacao; //uma especie do nome do no
-    int posicaoEstado = 0;
-    Estado previousNode;
+    //atributos
+    private int numeroCanibais; //direita = true; esquerda = false
+    private int numeroMissionarios;//cosntante
+    private boolean margem; //uma especie do nome do no
+    private int VALOR_DE_INICIO = 3;
+    private String designacao;
+    private int posicaoEstado = 0;
+    private Estado noAnterior;
 
     /**
      * Construtor primeiro, que por sua vez invoca o segundo construtor e
@@ -37,18 +38,18 @@ public class Estado {
      * Segundo construtor, que inicializa o objecto com as propriedades
      * descritas no paramentro
      *
-     * @param name
+     * @param designacao
      * @param nM
      * @param nC
      * @param lado
      * @param est
      * @param pos
      */
-    public Estado(String name, int nM, int nC, boolean lado, Estado est, int pos) {
+    public Estado(String designacao, int nM, int nC, boolean lado, Estado est, int pos) {
         this.numeroMissionarios = nC;
         this.numeroCanibais = nM;
-        this.designacao = name;
-        this.previousNode = est;
+        this.designacao = designacao;
+        this.noAnterior = est;
         this.margem = lado;
         this.posicaoEstado = pos;
     }
@@ -59,13 +60,13 @@ public class Estado {
     public void imprimir() {
         int n = 0;
         int c = 0;
-        if (previousNode != null) {
-            n = Math.abs(this.getNumeroCanibais() - previousNode.getNumeroCanibais());
-            c = Math.abs(this.getNumeroMissionarios() - previousNode.getNumeroMissionarios());
-            previousNode.imprimir();
+        if (this.getNoAnterior() != null) {
+            n = Math.abs(this.getNumeroCanibais() - this.getNoAnterior().getNumeroCanibais());
+            c = Math.abs(this.getNumeroMissionarios() - this.getNoAnterior().getNumeroMissionarios());
+            getNoAnterior().imprimir();
         }
-        String direcao = margem ? "----(" + n + "M)BARCO(" + c + "C)----->" : "<----(" + n + "M)BOAT(" + c + "C)-----";
-        System.out.println(numeroCanibais + "M/" + numeroMissionarios + "C " + direcao + " "
+        String direcao = this.isMargem() ? "----(" + n + "M)BARCO(" + c + "C)----->" : "<----(" + n + "M)BOAT(" + c + "C)-----";
+        System.out.println(getNumeroCanibais() + "M/" + getNumeroMissionarios() + "C " + direcao + " "
                 + (VALOR_DE_INICIO - this.getNumeroCanibais()) + "M/"
                 + (VALOR_DE_INICIO - this.getNumeroMissionarios()) + "C");
 
@@ -80,28 +81,33 @@ public class Estado {
      * @return
      */
     public boolean isIguais(Estado est) {
-        return (numeroCanibais == est.numeroCanibais && numeroMissionarios == est.numeroMissionarios && margem == est.margem);
+        return (this.getNumeroCanibais() == est.getNumeroCanibais() && this.getNumeroMissionarios() == est.getNumeroMissionarios() && isMargem() == est.isMargem());
     }
 
+    /**
+     * Para questoes de validacao, e' basicamento onde se verifica a restricao
+     * sobre o numero de missionarios em relacao ao numeros de canibasi, numeros
+     * negativos e absurdos entre tantos outros
+     *
+     * @return
+     */
     public boolean isEstadoInvalido() {
-        if (numeroCanibais < 0 || numeroMissionarios < 0) {
+        if (getNumeroCanibais() < 0 || getNumeroMissionarios() < 0) {
             return true;
         }
-        if (numeroCanibais < numeroMissionarios && numeroCanibais > 0) {
+        if (getNumeroCanibais() < getNumeroMissionarios() && getNumeroCanibais() > 0) {
             return true;
         }
-        if (3 - numeroCanibais < 3 - numeroMissionarios && 3 - numeroCanibais > 0) {
+        if (3 - getNumeroCanibais() < 3 - getNumeroMissionarios() && 3 - getNumeroCanibais() > 0) {
             return true;
         }
-        if (numeroCanibais > VALOR_DE_INICIO || numeroMissionarios > VALOR_DE_INICIO) {
+        if (getNumeroCanibais() > VALOR_DE_INICIO || getNumeroMissionarios() > VALOR_DE_INICIO) {
             return true;
         }
         return false;
     }
 
-    ////
-    ///
-    ///
+    //metodos especiais
     public int getNumeroCanibais() {
         return numeroCanibais;
     }
@@ -142,12 +148,19 @@ public class Estado {
         this.posicaoEstado = posicaoEstado;
     }
 
-    public Estado getPreviousNode() {
-        return previousNode;
+    public Estado getNoAnterior() {
+        return noAnterior;
     }
 
-    public void setPreviousNode(Estado previousNode) {
-        this.previousNode = previousNode;
+    public void setNoAnterior(Estado noAnterior) {
+        this.noAnterior = noAnterior;
+    }
+
+    /**
+     * @param VALOR_DE_INICIO the VALOR_DE_INICIO to set
+     */
+    public void setVALOR_DE_INICIO(int VALOR_DE_INICIO) {
+        this.VALOR_DE_INICIO = VALOR_DE_INICIO;
     }
 
 }

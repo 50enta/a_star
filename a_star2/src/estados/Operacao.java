@@ -10,21 +10,34 @@ import java.util.ArrayList;
  */
 public class Operacao {
 
-    public int current_boat_node = 0;
-    public ArrayList lista = new ArrayList();
+    private int estadoDoBarcoActual = 0;
+    private ArrayList lista = new ArrayList();
 
-    //constructor to add  node to the Agend aand include parent node id available
-    public void addicionarALista(String nodeName, Estado pai, int nMiss, int nCan) {
-        int direcao = pai.margem ? 1 : -1;
-        String novaDesignacao = pai.getDesignacao() + nodeName;
-        Estado estado = new Estado(novaDesignacao, pai.numeroCanibais + nMiss * direcao,
-                pai.numeroMissionarios + nCan * direcao, !pai.margem, pai, pai.getPosicaoEstado());
+    /**
+     * Adiciona o estado a lista e faz a linkagem com o no pai
+     *
+     * @param designacao
+     * @param pai
+     * @param nMiss
+     * @param nCan
+     */
+    public void addicionarALista(String designacao, Estado pai, int nMiss, int nCan) {
+        int direcao = pai.isMargem() ? 1 : -1;
+        String novaDesignacao = pai.getDesignacao() + designacao;
+        Estado estado = new Estado(novaDesignacao, pai.getNumeroCanibais() + nMiss * direcao,
+                pai.getNumeroMissionarios() + nCan * direcao, !pai.isMargem(), pai, pai.getPosicaoEstado());
         this.adicionarALista(estado);
     }
 
+    /**
+     * Reponsavel por incluir os nos possiveis para a lista. Depois da validacao
+     * e tudo
+     *
+     * @param novo
+     */
     public void adicionarALista(Estado novo) {
         if (!novo.isEstadoInvalido()) {
-            this.lista.add(novo);
+            this.getLista().add(novo);
         }
     }
 
@@ -32,8 +45,8 @@ public class Operacao {
         boolean achou = false;
         ArrayList listinha = new ArrayList();
         adicionarALista(inicio);
-        while (lista.size() > 0 && !achou) {
-            Estado curNode = (Estado) lista.remove(current_boat_node);
+        while (getLista().size() > 0 && !achou) {
+            Estado curNode = (Estado) getLista().remove(getEstadoDoBarcoActual());
             if (curNode.isIguais(fim)) {
                 listinha.add(curNode);
                 achou = true;
@@ -65,12 +78,12 @@ public class Operacao {
     //
     //
     //
-    public int getCurrent_boat_node() {
-        return current_boat_node;
+    public int getEstadoDoBarcoActual() {
+        return estadoDoBarcoActual;
     }
 
-    public void setCurrent_boat_node(int current_boat_node) {
-        this.current_boat_node = current_boat_node;
+    public void setEstadoDoBarcoActual(int estadoDoBarcoActual) {
+        this.estadoDoBarcoActual = estadoDoBarcoActual;
     }
 
     public ArrayList getLista() {
