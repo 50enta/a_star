@@ -1,5 +1,7 @@
 package estados;
 
+import java.util.ArrayList;
+
 /**
  * Esta classe represent o estado em que se esta. Mais concretamento uma margem,
  * que pode ser direita ou esquerda
@@ -18,6 +20,10 @@ public class Estado {
     private String designacao;
     private int posicaoEstado = 0;
     private Estado noAnterior;
+    
+    private int gn;
+    private int fn;
+    private int hn;
 
     /**
      * Construtor primeiro, que por sua vez invoca o segundo construtor e
@@ -58,19 +64,54 @@ public class Estado {
      * Como se fosse o metodo toString. Imprime o seu estado actual
      */
     public void imprimir() {
-        int n = 0;
+        int m = 0;
         int c = 0;
         if (this.getNoAnterior() != null) {
-            n = Math.abs(this.getNumeroCanibais() - this.getNoAnterior().getNumeroCanibais());
-            c = Math.abs(this.getNumeroMissionarios() - this.getNoAnterior().getNumeroMissionarios());
+            c = Math.abs(this.getNumeroCanibais() - this.getNoAnterior().getNumeroCanibais());
+            m = Math.abs(this.getNumeroMissionarios() - this.getNoAnterior().getNumeroMissionarios());
             getNoAnterior().imprimir();
         }
-        String direcao = this.isMargem() ? "----(" + n + "M)BARCO(" + c + "C)----->" : "<----(" + n + "M)BOAT(" + c + "C)-----";
-        System.out.println(getNumeroCanibais() + "M/" + getNumeroMissionarios() + "C " + direcao + " "
+        String direcao = this.isMargem() ? "-----(" + m + "C)BARCO(" + c + "M)---->" : "<----(" + m + "C)BARCO(" + c + "M)-----";
+        
+        System.out.println(
+                this.getNumeroCanibais() + "M/"
+                + this.getNumeroMissionarios() + "C "
+                + direcao + " "
                 + (VALOR_DE_INICIO - this.getNumeroCanibais()) + "M/"
-                + (VALOR_DE_INICIO - this.getNumeroMissionarios()) + "C");
-
+                + (VALOR_DE_INICIO - this.getNumeroMissionarios()) + "C"
+        );
     }
+    
+    public void gerarSolucao(ArrayList<Impressao> lista) {
+        int m = 0;
+        int c = 0;
+        if (this.getNoAnterior() != null) {
+            c = Math.abs(this.getNumeroCanibais() - this.getNoAnterior().getNumeroCanibais());
+            m = Math.abs(this.getNumeroMissionarios() - this.getNoAnterior().getNumeroMissionarios());
+            getNoAnterior().gerarSolucao(lista);
+        }
+        String direcao = this.isMargem() ? "-----(" + m + "C)BARCO(" + c + "M)---->" : "<----(" + m + "C)BARCO(" + c + "M)-----";
+        
+//        System.out.println(
+//                this.getNumeroCanibais() + "M/"
+//                + this.getNumeroMissionarios() + "C "
+//                + direcao + " "
+//                + (VALOR_DE_INICIO - this.getNumeroCanibais()) + "M/"
+//                + (VALOR_DE_INICIO - this.getNumeroMissionarios()) + "C"
+//        );
+        Impressao imp = new Impressao();
+        imp.setCanAbordo(m);
+        imp.setMissAbordo(c);
+        imp.setDireita(this.isMargem() ? true : false);
+        
+        imp.setCanEsquerda(this.getNumeroMissionarios());
+        imp.setMissEsquerda(this.getNumeroCanibais());
+        
+        imp.setCanDireita(VALOR_DE_INICIO - this.getNumeroMissionarios());
+        imp.setMissDireita(VALOR_DE_INICIO - this.getNumeroCanibais());
+        lista.add(imp);
+    }
+    
 
     /**
      * Metodo para verificar se os nos sao iguais ou nao. Nos sao iguais quando
@@ -81,7 +122,7 @@ public class Estado {
      * @return
      */
     public boolean isIguais(Estado est) {
-        return (this.getNumeroCanibais() == est.getNumeroCanibais() && this.getNumeroMissionarios() == est.getNumeroMissionarios() && isMargem() == est.isMargem());
+        return (this.getNumeroCanibais() == est.getNumeroCanibais() && this.getNumeroMissionarios() == est.getNumeroMissionarios() && this.isMargem() == est.isMargem());
     }
 
     /**
@@ -92,16 +133,16 @@ public class Estado {
      * @return
      */
     public boolean isEstadoInvalido() {
-        if (getNumeroCanibais() < 0 || getNumeroMissionarios() < 0) {
+        if (this.getNumeroCanibais() < 0 || this.getNumeroMissionarios() < 0) {
             return true;
         }
-        if (getNumeroCanibais() < getNumeroMissionarios() && getNumeroCanibais() > 0) {
+        if (this.getNumeroCanibais() < this.getNumeroMissionarios() && this.getNumeroCanibais() > 0) {
             return true;
         }
-        if (3 - getNumeroCanibais() < 3 - getNumeroMissionarios() && 3 - getNumeroCanibais() > 0) {
+        if (3 - this.getNumeroCanibais() < 3 - this.getNumeroMissionarios() && 3 - this.getNumeroCanibais() > 0) {
             return true;
         }
-        if (getNumeroCanibais() > VALOR_DE_INICIO || getNumeroMissionarios() > VALOR_DE_INICIO) {
+        if (this.getNumeroCanibais() > VALOR_DE_INICIO || this.getNumeroMissionarios() > VALOR_DE_INICIO) {
             return true;
         }
         return false;
@@ -111,47 +152,47 @@ public class Estado {
     public int getNumeroCanibais() {
         return numeroCanibais;
     }
-
+    
     public void setNumeroCanibais(int numeroCanibais) {
         this.numeroCanibais = numeroCanibais;
     }
-
+    
     public int getNumeroMissionarios() {
         return numeroMissionarios;
     }
-
+    
     public void setNumeroMissionarios(int numeroMissionarios) {
         this.numeroMissionarios = numeroMissionarios;
     }
-
+    
     public boolean isMargem() {
         return margem;
     }
-
+    
     public void setMargem(boolean margem) {
         this.margem = margem;
     }
-
+    
     public String getDesignacao() {
         return designacao;
     }
-
+    
     public void setDesignacao(String designacao) {
         this.designacao = designacao;
     }
-
+    
     public int getPosicaoEstado() {
         return posicaoEstado;
     }
-
+    
     public void setPosicaoEstado(int posicaoEstado) {
         this.posicaoEstado = posicaoEstado;
     }
-
+    
     public Estado getNoAnterior() {
         return noAnterior;
     }
-
+    
     public void setNoAnterior(Estado noAnterior) {
         this.noAnterior = noAnterior;
     }
@@ -162,5 +203,5 @@ public class Estado {
     public void setVALOR_DE_INICIO(int VALOR_DE_INICIO) {
         this.VALOR_DE_INICIO = VALOR_DE_INICIO;
     }
-
+    
 }
